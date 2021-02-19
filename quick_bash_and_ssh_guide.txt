@@ -1,0 +1,77 @@
+It will make your life easier, if you use ssh keys for authentication (no need to enter the password any more). This instruction is for linux, but you can use part of it if you are on windows as well.
+
+# on your local machine, generate an ssh-key (you can choose to not set a password)
+ssh-keygen
+
+# copy the public key to the deep learning entry node
+ssh-copy-id username@lbd.zserv.tuwien.ac.at
+
+# now you should be able to login there without password if you didn't set it on your ssh key file
+ssh username@lbd.zserv.tuwien.ac.at
+
+# we also want to login to the dl nodes without password, so on lbd, again
+ssh-keygen
+ssh-copy-id username@dl1    # i believe you only need to do that once, as the file systems are mirrored.
+
+# port forwarding and hostname, on your local machine
+cat $HOME/.ssh/config
+Host dlmain
+Hostname lbd.zserv.tuwien.ac.at
+LocalForward 8081 localhost:10080
+User username
+
+# now you can open a terminal and just get to the entry node via
+ssh dlmain
+
+# we have modules for a newer gcc and cuda, e.g.
+ssh dlmain
+ssh dl1
+module avail
+module load gcc/7.5.0
+module list
+
+# you can setup your environment in ~/.bashrc, e.g.
+cat ~/.bashrc
+# .bashrc
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+        . /etc/bashrc
+fi
+
+# Uncomment the following line if you don't like systemctl's auto-paging feature:
+# export SYSTEMD_PAGER=
+
+# User specific aliases and functions
+# note that these can be also set in the _start_all_learning.sh script.
+module load gcc/7.5.0
+
+# export the scripts from this repo to the path, so we can do, e.g., > _check_load.sh instead of > ~/scripts/_check_load.sh
+export PATH="$HOME/scripts:$PATH"
+
+# for some reason cmake doesn't see the new gcc / g++, but this helps
+alias cc=gcc
+export CC=gcc
+export CXX=g++
+
+
+# in my project we have some torch extensions. I was testing different cuda versions and i had to put them into scratch, so that every node has its own copy
+mkdir -p /scratch/$(whoami)/torch_extensions
+export TORCH_EXTENSIONS_DIR=/scratch/$(whoami)/torch_extensions
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/dlmain/username/bin/anaconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/dlmain/username/bin/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/dlmain/username/bin/anaconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/dlmain/username/bin/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+
