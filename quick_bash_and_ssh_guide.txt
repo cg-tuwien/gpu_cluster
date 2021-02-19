@@ -30,6 +30,12 @@ module avail
 module load gcc/7.5.0
 module list
 
+# there is internet access on dlmain, you can for instance clone this repo:
+git clone git@github.com:cg-tuwien/dl_cluster.git
+
+# and then edit the scripts to your liking (nano is an easy to use text editor)
+nano ./scripts/_start_all_learning.sh
+
 # you can setup your environment in ~/.bashrc, e.g.
 cat ~/.bashrc
 # .bashrc
