@@ -31,7 +31,7 @@ for dl in $nodes; do
         gpu=${gpus:$i:1}
         experiment=${experiment_list[$experiment_index]}
         echo "starting experiment $experiment on $dl_host on gpu $gpu"
-        ssh $dl_host "mkdir -p /scratch/acelarek/gmms"
+        ssh $dl_host "mkdir -p /scratch/username/project"
 #         ssh $dl_host "tmux new -d \"module load cuda/11.2; module load gcc/7.5.0; cd ~/gmc_net/src; CUDA_VISIBLE_DEVICES=$gpu python -uO -m cluster_experiments.e_$experiment cuda |& tee ~/data/logs/cluster_experiments.e_$experiment.log\""
 #        ssh $dl_host "tmux new -d \"module load cuda/10.2; module load gcc/7.5.0; cd ~/gmc_net/src; CUDA_VISIBLE_DEVICES=$gpu python -uO -m cluster_experiments.e_$experiment cuda |& tee ~/data/logs/cluster_experiments.e_$experiment.log\""
         experiment_index=$((experiment_index + 1))
