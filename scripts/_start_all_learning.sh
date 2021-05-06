@@ -33,7 +33,7 @@ for dl in $nodes; do
         echo "starting experiment $python_run_module on $dl_host on gpu $gpu"
         ssh $dl_host "mkdir -p /scratch/username/project"
 #         ssh $dl_host "tmux new -d \"module load cuda/11.2; module load gcc/7.5.0; cd ~/gmc_net/src; CUDA_VISIBLE_DEVICES=$gpu python -uO -m cluster_experiments.e_$experiment cuda |& tee ~/data/logs/cluster_experiments.e_$experiment.log\""
-        ssh $dl_host "tmux new -d \"module load cuda/11.2; module load gcc/7.5.0; cd ~/project/src; echo $python_run_module > ~/data/logs/$dl_host.$gpu.log; CUDA_VISIBLE_DEVICES=$gpu python -uO -m $python_run_module cuda |& tee -a ~/logs/$dl_host.$gpu.log\""
+        ssh $dl_host "tmux new -d \"module load cuda/11.2; module load gcc/7.5.0; cd ~/project/src; echo $python_run_module > ~/logs/$dl_host.$gpu.log; CUDA_VISIBLE_DEVICES=$gpu python -uO -m $python_run_module cuda |& tee -a ~/logs/$dl_host.$gpu.log\""
         experiment_index=$((experiment_index + 1))
         if [ $experiment_index -ge ${#experiment_list[@]} ]; then
             echo "all experiments started"
