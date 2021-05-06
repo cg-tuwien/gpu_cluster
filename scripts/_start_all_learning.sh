@@ -13,8 +13,7 @@ echo "starting learning"
 # starting python in unbuffered mode (-u) in order to be able to monitor the logfile
 # -m starts the script as a module, which is necessary in some cases (project consists of several parallel modules that include each other).
 
-mkdir -p ~/data/logs
-mkdir -p ~/data/weights
+mkdir -p ~/logs
 
 experiment_list=({0..7})
 # experiment_list=(0 2 4 5 10 11)
@@ -30,10 +29,11 @@ for dl in $nodes; do
     for (( i=0; i<${#gpus}; i++ )); do
         gpu=${gpus:$i:1}
         experiment=${experiment_list[$experiment_index]}
-        echo "starting experiment $experiment on $dl_host on gpu $gpu"
+        python_run_module="cluster_experiments.e_$experiment"
+        echo "starting experiment $python_run_module on $dl_host on gpu $gpu"
         ssh $dl_host "mkdir -p /scratch/username/project"
 #         ssh $dl_host "tmux new -d \"module load cuda/11.2; module load gcc/7.5.0; cd ~/gmc_net/src; CUDA_VISIBLE_DEVICES=$gpu python -uO -m cluster_experiments.e_$experiment cuda |& tee ~/data/logs/cluster_experiments.e_$experiment.log\""
-#        ssh $dl_host "tmux new -d \"module load cuda/10.2; module load gcc/7.5.0; cd ~/gmc_net/src; CUDA_VISIBLE_DEVICES=$gpu python -uO -m cluster_experiments.e_$experiment cuda |& tee ~/data/logs/cluster_experiments.e_$experiment.log\""
+        ssh $dl_host "tmux new -d \"module load cuda/11.2; module load gcc/7.5.0; cd ~/project/src; echo $python_run_module > ~/data/logs/$dl_host.$gpu.log; CUDA_VISIBLE_DEVICES=$gpu python -uO -m $python_run_module cuda |& tee -a ~/logs/$dl_host.$gpu.log\""
         experiment_index=$((experiment_index + 1))
         if [ $experiment_index -ge ${#experiment_list[@]} ]; then
             echo "all experiments started"
